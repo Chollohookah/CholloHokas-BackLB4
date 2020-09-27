@@ -29,5 +29,6 @@ export class DbDataSource
     dsConfig: object = config,
   ) {
     super(dsConfig);
+    console.log(config);
   }
 }
