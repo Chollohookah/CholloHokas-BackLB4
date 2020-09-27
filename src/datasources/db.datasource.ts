@@ -2,7 +2,7 @@ import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
 const config = {
-  name: 'CholloHookaMongoDb',
+  name: 'DbDataSource',
   connector: 'mongodb',
   url: `mongodb+srv://${process.env.USUARIO_DB}:${process.env.PASS_DB}@${process.env.HOST_DB}/${process.env.NOMBRE_BASE_DE_DATOS}?authSource=admin&replicaSet=atlas-s1shvh-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true`,
   host: process.env.HOST_DB,
@@ -21,14 +21,13 @@ const config = {
 export class DbDataSource
   extends juggler.DataSource
   implements LifeCycleObserver {
-  static dataSourceName = 'db';
+  static dataSourceName = 'DbDataSource';
   static readonly defaultConfig = config;
 
   constructor(
-    @inject('datasources.config.db', {optional: true})
+    @inject('datasources.config.DbDataSource', {optional: true})
     dsConfig: object = config,
   ) {
     super(dsConfig);
-    console.log(config);
   }
 }

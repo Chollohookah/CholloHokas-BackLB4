@@ -8,9 +8,7 @@ export class SiteRepository extends DefaultCrudRepository<
   typeof Site.prototype.id,
   SiteRelations
 > {
-  constructor(
-    @inject('datasources.CholloHookaMongoDb') dataSource: DbDataSource,
-  ) {
+  constructor(@inject('datasources.DbDataSource') dataSource: DbDataSource) {
     super(Site, dataSource);
   }
 }
