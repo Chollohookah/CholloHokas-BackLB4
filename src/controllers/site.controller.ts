@@ -7,22 +7,22 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  del,
+  post,
+  param,
   get,
   getModelSchemaRef,
-  param,
   patch,
-  post,
   put,
+  del,
   requestBody,
 } from '@loopback/rest';
 import {Site} from '../models';
 import {SiteRepository} from '../repositories';
 
-export class SitesController {
+export class SiteController {
   constructor(
     @repository(SiteRepository)
-    public siteRepository: SiteRepository,
+    public siteRepository : SiteRepository,
   ) {}
 
   @post('/sites', {
@@ -57,7 +57,9 @@ export class SitesController {
       },
     },
   })
-  async count(@param.where(Site) where?: Where<Site>): Promise<Count> {
+  async count(
+    @param.where(Site) where?: Where<Site>,
+  ): Promise<Count> {
     return this.siteRepository.count(where);
   }
 
@@ -76,7 +78,9 @@ export class SitesController {
       },
     },
   })
-  async find(@param.filter(Site) filter?: Filter<Site>): Promise<Site[]> {
+  async find(
+    @param.filter(Site) filter?: Filter<Site>,
+  ): Promise<Site[]> {
     return this.siteRepository.find(filter);
   }
 
@@ -116,7 +120,7 @@ export class SitesController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Site, {exclude: 'where'}) filter?: FilterExcludingWhere<Site>,
+    @param.filter(Site, {exclude: 'where'}) filter?: FilterExcludingWhere<Site>
   ): Promise<Site> {
     return this.siteRepository.findById(id, filter);
   }

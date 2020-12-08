@@ -1,7 +1,21 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({
+  settings: {
+    mongodb: {
+      collection: 'hookas',
+    },
+  },
+})
 export class CachimbaModel extends Entity {
+  @property({
+    type: 'string',
+    id: true,
+    defaultFn: 'uuidv4',
+    mongodb: {dataType: 'ObjectId'},
+  })
+  id: string;
+
   @property({
     type: 'string',
     required: true,
@@ -16,10 +30,36 @@ export class CachimbaModel extends Entity {
   categorias: string[];
 
   @property({
+    type: 'array',
+    itemType: 'string',
+    required: false,
+  })
+  fotos: string[];
+
+  @property({
+    type: 'array',
+    itemType: 'string',
+    required: false,
+  })
+  colores: string[];
+
+  @property({
     type: 'string',
     required: true,
   })
   imagen: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  shortDesc: string;
+
+  @property({
+    type: 'object',
+    required: false,
+  })
+  specs: object;
 
   @property({
     type: 'string',
@@ -76,6 +116,11 @@ export class CachimbaModel extends Entity {
   })
   linkProducto: string;
 
+  @property({
+    type: 'string',
+    mongodb: {dataType: 'ObjectId'}
+  })
+  siteId?: string;
 
   constructor(data?: Partial<CachimbaModel>) {
     super(data);

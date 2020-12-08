@@ -1,4 +1,4 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
 import {CachimbaModel} from './cachimba-model.model';
 
 @model({
@@ -12,6 +12,7 @@ export class Site extends Entity {
     type: 'string',
     id: true,
     generated: true,
+    mongodb: {dataType: 'ObjectId'},
   })
   id?: string;
 
@@ -33,12 +34,14 @@ export class Site extends Entity {
   })
   logo: string;
 
-  @property({
-    type: 'array',
-    itemType: 'object',
-    required: true,
-  })
+  @hasMany(() => CachimbaModel)
   data: CachimbaModel[];
+
+  @property({
+    type: 'string',
+    mongodb: {dataType: 'ObjectId'},
+  })
+  blockId?: string;
 
   constructor(data?: Partial<Site>) {
     super(data);
