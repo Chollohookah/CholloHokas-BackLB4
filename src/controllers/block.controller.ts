@@ -7,13 +7,13 @@ import {
   Where,
 } from '@loopback/repository';
 import {
-  post,
-  param,
+  del,
   get,
   getModelSchemaRef,
+  param,
   patch,
+  post,
   put,
-  del,
   requestBody,
 } from '@loopback/rest';
 import {Block} from '../models';
@@ -22,7 +22,7 @@ import {BlockRepository} from '../repositories';
 export class BlockController {
   constructor(
     @repository(BlockRepository)
-    public blockRepository : BlockRepository,
+    public blockRepository: BlockRepository,
   ) {}
 
   @post('/blocks', {
@@ -57,9 +57,7 @@ export class BlockController {
       },
     },
   })
-  async count(
-    @param.where(Block) where?: Where<Block>,
-  ): Promise<Count> {
+  async count(@param.where(Block) where?: Where<Block>): Promise<Count> {
     return this.blockRepository.count(where);
   }
 
@@ -78,9 +76,7 @@ export class BlockController {
       },
     },
   })
-  async find(
-    @param.filter(Block) filter?: Filter<Block>,
-  ): Promise<Block[]> {
+  async find(@param.filter(Block) filter?: Filter<Block>): Promise<Block[]> {
     return this.blockRepository.find(filter);
   }
 
@@ -120,9 +116,28 @@ export class BlockController {
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(Block, {exclude: 'where'}) filter?: FilterExcludingWhere<Block>
+    @param.filter(Block, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Block>,
   ): Promise<Block> {
     return this.blockRepository.findById(id, filter);
+  }
+
+  @get('/blocks/latestBlock', {
+    responses: {
+      '200': {
+        description: 'Latest valid block of the shisha-chain',
+        content: {
+          'application/json': {
+            schema: getModelSchemaRef(Block, {includeRelations: true}),
+          },
+        },
+      },
+    },
+  })
+  async findLatestBlock(
+    @param.filter(Block) filter?: Filter<Block>,
+  ): Promise<Block> {
+    return this.blockRepository.returnLatestValidBlock(filter);
   }
 
   @patch('/blocks/{id}', {
