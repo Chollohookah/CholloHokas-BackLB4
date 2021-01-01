@@ -32,22 +32,31 @@ export class BlockRepository extends DefaultCrudRepository<
   }
 
   public async returnLatestValidBlock(filter: any) {
-    let bloquesDescendientesFecha = await this.find(
-      Object.assign(
+    let baseFilter = {
+      order: 'dateBlock desc',
+    };
+    let include = {
+      include: [
         {
-          order: ['dateBlock desc'],
+          relation: 'minedIds',
+          scope: {
+            include: [{relation: 'data'}],
+          },
         },
-        filter,
-      ),
-    );
+      ],
+    };
+    let bloquesDescendientesFecha = await this.find(baseFilter as any);
+
     for (const bloque of bloquesDescendientesFecha) {
       let estadoOK = Object.keys(bloque.statuses).every(entry => {
         return (bloque.statuses as any)[entry] === true;
       });
       if (estadoOK) {
-        return bloque;
+        let bloqueReturn = await this.findById(bloque.id, include);
+        return bloqueReturn;
       }
     }
+
     return bloquesDescendientesFecha[0];
   }
 }
