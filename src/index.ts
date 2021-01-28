@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
-import {ApplicationConfig, CholloHookaBackApplication} from './application';
+import { ApplicationConfig, CholloHookaBackApplication } from './application';
 export * from './application';
-
+const fs = require('file-system');
 export async function main(options: ApplicationConfig = {}) {
   const app = new CholloHookaBackApplication(options);
   dotenv.config();
@@ -21,6 +21,9 @@ if (require.main === module) {
     rest: {
       port: +(process.env.PORT ?? 3000),
       host: process.env.HOST,
+      protocol: 'https',
+      key: fs.readFileSync(require('path').resolve(__dirname, "../certs/privatekey.pem")),
+      cert: fs.readFileSync(require('path').resolve(__dirname, "../certs/certificate.pem")),
       // The `gracePeriodForClose` provides a graceful close for http/https
       // servers with keep-alive clients. The default value is `Infinity`
       // (don't force-close). If you want to immediately destroy all sockets

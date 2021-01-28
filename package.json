@@ -52,8 +52,10 @@
     "@loopback/rest": "^7.0.1",
     "@loopback/rest-explorer": "^3.0.1",
     "@loopback/service-proxy": "^3.0.1",
+    "@types/filesystem": "0.0.29",
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
+    "file-system": "^2.2.2",
     "loopback-connector-mongodb": "^5.4.0",
     "md5": "^2.3.0",
     "tslib": "^2.0.0"
