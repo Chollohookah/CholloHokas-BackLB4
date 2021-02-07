@@ -1,5 +1,5 @@
-import {ApplicationConfig} from '@loopback/core';
-import {CholloHookaBackApplication} from './application';
+import { ApplicationConfig } from '@loopback/core';
+import { CholloHookaBackApplication } from './application';
 
 /**
  * Export the OpenAPI spec from the application
