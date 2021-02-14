@@ -31,19 +31,6 @@ export class EmailRepository extends DefaultCrudRepository<
       throw new HttpErrors.Conflict(`El email ${email.email} ya existe.`);
   }
 
-  private async pingAPI(api: ApiMailChimp) {
-    let baseurl = `https://${api.APIServer}.api.mailchimp.com/3.0`;
-    console.log(api, baseurl);
-    try {
-      return await axios.get(`${baseurl}/`, {
-        headers: {Authorization: `Bearer ${api.APIKey}`},
-      });
-    } catch (error) {
-      console.log(error);
-      throw new HttpErrors.Conflict('Error de autentificación');
-    }
-  }
-
   private async getEmail(email: Email, api: ApiMailChimp) {
     try {
       let baseurl = `https://${api.APIServer}.api.mailchimp.com/3.0`;

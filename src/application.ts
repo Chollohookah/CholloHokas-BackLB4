@@ -1,16 +1,18 @@
-import { BootMixin } from '@loopback/boot';
-import { ApplicationConfig } from '@loopback/core';
+import {AuthenticationComponent} from '@loopback/authentication';
+import {JWTAuthenticationComponent} from '@loopback/authentication-jwt';
+import {BootMixin} from '@loopback/boot';
+import {ApplicationConfig} from '@loopback/core';
+import {RepositoryMixin} from '@loopback/repository';
+import {RestApplication} from '@loopback/rest';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
 } from '@loopback/rest-explorer';
-import { RepositoryMixin } from '@loopback/repository';
-import { RestApplication } from '@loopback/rest';
-import { ServiceMixin } from '@loopback/service-proxy';
+import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import { MySequence } from './sequence';
+import {MySequence} from './sequence';
 
-export { ApplicationConfig };
+export {ApplicationConfig};
 
 export class CholloHookaBackApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -21,8 +23,14 @@ export class CholloHookaBackApplication extends BootMixin(
     // Set up the custom sequence
     this.sequence(MySequence);
 
+    this.component(AuthenticationComponent);
+    // Mount jwt component
+    this.component(JWTAuthenticationComponent);
+
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));
+
+    //this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
 
     // Customize @loopback/rest-explorer configuration here
     if (!process.env.PRODUCTION_ENABLED) {

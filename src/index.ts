@@ -19,9 +19,13 @@ if (require.main === module) {
   // Run the application
   const config = {
     rest: {
-      protocol: 'https',
-      key: fs.readFileSync(require('path').resolve(__dirname, "../certs/privkey.pem")),
-      cert: fs.readFileSync(require('path').resolve(__dirname, "../certs/fullchain.pem")),
+      protocol: process.env.PRODUCTION_ENABLED ? 'https' : 'http',
+      key: fs.readFileSync(
+        require('path').resolve(__dirname, '../certs/privkey.pem'),
+      ),
+      cert: fs.readFileSync(
+        require('path').resolve(__dirname, '../certs/fullchain.pem'),
+      ),
       port: +(process.env.PORT ?? 3000),
       host: process.env.HOST,
 

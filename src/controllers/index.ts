@@ -7,3 +7,5 @@ export * from './site.controller';
 export * from './block-site.controller';
 export * from './email.controller';
 export * from './utils.controller';
+export * from './user.controller';
+export * from './error.controller';

@@ -1,20 +1,33 @@
-import {/* inject, */ BindingScope, injectable} from '@loopback/core';
+import {TokenService} from '@loopback/authentication';
+import {TokenServiceBindings} from '@loopback/authentication-jwt';
+import {/* inject, */ BindingScope, inject, injectable} from '@loopback/core';
 import {Filter, repository} from '@loopback/repository';
+import {HttpErrors} from '@loopback/rest';
+import {securityId} from '@loopback/security';
 import {ResultShrinkDatabase} from '../interfaces/ResultUtils';
-import {Block} from '../models';
+import {Block, UserWithToken} from '../models';
+import {LoginClass} from '../models/login.model';
 import {
   BlockRepository,
   CachimbaModelRepository,
   SiteRepository,
+  UserRepository,
 } from '../repositories';
+import {Utils} from '../static/Utils';
+
+const fs = require('file-system');
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class UtilsService {
   constructor(
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: TokenService,
     @repository(BlockRepository) private blockRepo: BlockRepository,
     @repository(SiteRepository) private siteRepo: SiteRepository,
     @repository(CachimbaModelRepository)
     private cachimbaRepo: CachimbaModelRepository,
+    @repository(UserRepository)
+    private userRepo: UserRepository,
   ) {}
 
   public async shrinkDatabase() {
@@ -64,5 +77,34 @@ export class UtilsService {
       deletedSites: deletedSites,
       deletedHookas: deletedHookas,
     } as ResultShrinkDatabase);
+  }
+
+  public async login(loginData: LoginClass): Promise<UserWithToken> {
+    if (loginData.email && loginData.pass) {
+      if (Utils.validateEmail(loginData.email)) {
+        let user = await this.userRepo.returnUser(
+          loginData.email,
+          loginData.pass,
+        );
+        let expireSeconds = 86400;
+        let userJWT = {
+          [securityId]: user.id as any,
+          email: user.email,
+          name: user.name,
+        };
+
+        let token = await this.jwtService.generateToken(userJWT);
+
+        return {user, token, expiresIn: expireSeconds};
+      } else {
+        throw new HttpErrors.Unauthorized(
+          `${loginData.email} no es un correo electronico valido.`,
+        );
+      }
+    } else {
+      throw new HttpErrors.Unauthorized(
+        `Debes proveer los campos email y pass.`,
+      );
+    }
   }
 }
