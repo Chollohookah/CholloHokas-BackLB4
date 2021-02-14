@@ -6,3 +6,4 @@ export * from './site-cachimba-model.controller';
 export * from './site.controller';
 export * from './block-site.controller';
 export * from './email.controller';
+export * from './utils.controller';
