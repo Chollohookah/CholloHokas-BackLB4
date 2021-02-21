@@ -9,3 +9,5 @@ export * from './email.controller';
 export * from './utils.controller';
 export * from './user.controller';
 export * from './error.controller';
+export * from './blog-post.controller';
+export * from './blog-post-user.controller';

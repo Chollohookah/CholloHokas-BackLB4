@@ -5,3 +5,4 @@ export * from './email.model';
 export * from './user.model';
 export * from './user-with-token.model';
 export * from './error.model';
+export * from './blog-post.model';
