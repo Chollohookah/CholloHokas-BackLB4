@@ -19,7 +19,7 @@ if (require.main === module) {
   // Run the application
   const config = {
     rest: {
-      protocol: process.env.PRODUCTION_ENABLED ? 'https' : 'http',
+      protocol: 'https',
       key: fs.readFileSync(
         require('path').resolve(__dirname, '../certs/privkey.pem'),
       ),
