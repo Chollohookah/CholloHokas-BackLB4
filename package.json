@@ -59,7 +59,7 @@
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
-    "file-system": "^2.2.2",
+    "file-system": "^1.2.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "loopback-connector-mongodb": "^5.4.0",

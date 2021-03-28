@@ -3,11 +3,11 @@ import {Entity, model, property} from '@loopback/repository';
 @model({
   settings: {
     mongodb: {
-      collection: 'hookas',
+      collection: 'items',
     },
   },
 })
-export class CachimbaModel extends Entity {
+export class ItemModel extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -122,13 +122,13 @@ export class CachimbaModel extends Entity {
   })
   siteId?: string;
 
-  constructor(data?: Partial<CachimbaModel>) {
+  constructor(data?: Partial<ItemModel>) {
     super(data);
   }
 }
 
-export interface CachimbaModelRelations {
+export interface ItemModelRelations {
   // describe navigational properties here
 }
 
-export type CachimbaModelWithRelations = CachimbaModel & CachimbaModelRelations;
+export type ItemModelWithRelations = ItemModel & ItemModelRelations;

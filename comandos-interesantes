@@ -1,0 +1,2 @@
+scp -i /home/sportak/Descargas/ubuntuKeyPair.pem ubuntu@ec2-15-237-131-13.eu-west-3.compute.amazonaws.com:/home/ubuntu/CholloHokas-BackLB4/.env .
+
