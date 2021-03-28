@@ -137,7 +137,7 @@ export class BlockController {
   async findLatestBlock(
     @param.filter(Block) filter?: Filter<Block>,
   ): Promise<Block> {
-    return this.blockRepository.returnLatestValidBlock(filter);
+    return await this.blockRepository.returnLatestValidBlock(filter);
   }
 
   @patch('/blocks/{id}', {

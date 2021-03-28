@@ -2,7 +2,7 @@ import {Getter, inject} from '@loopback/core';
 import {
   DefaultCrudRepository,
   HasManyRepositoryFactory,
-  repository,
+  repository
 } from '@loopback/repository';
 import {DbDataSource} from '../datasources';
 import {Block, BlockRelations, Site} from '../models';
@@ -45,14 +45,17 @@ export class BlockRepository extends DefaultCrudRepository<
         },
       ],
     };
+    console.log("suave")
     let bloquesDescendientesFecha = await this.find(baseFilter as any);
-
+    console.log("suave 2")
     for (const bloque of bloquesDescendientesFecha) {
       let estadoOK = Object.keys(bloque.statuses).every(entry => {
         return (bloque.statuses as any)[entry] === true;
       });
       if (estadoOK) {
+        console.log("suave 3")
         let bloqueReturn = await this.findById(bloque.id, include);
+        console.log(bloqueReturn)
         return bloqueReturn;
       }
     }

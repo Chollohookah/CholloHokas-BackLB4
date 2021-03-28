@@ -20,13 +20,13 @@ export class SiteRepository extends DefaultCrudRepository<
 
   constructor(
     @inject('datasources.DbDataSource') dataSource: DbDataSource,
-    @repository.getter('CachimbaModelRepository')
-    protected cachimbaModelRepositoryGetter: Getter<ItemModelRepository>,
+    @repository.getter('ItemModelRepository')
+    protected itemModelRepositoryGetter: Getter<ItemModelRepository>,
   ) {
     super(Site, dataSource);
     this.data = this.createHasManyRepositoryFactoryFor(
       'data',
-      cachimbaModelRepositoryGetter,
+      itemModelRepositoryGetter,
     );
     this.registerInclusionResolver('data', this.data.inclusionResolver);
   }
