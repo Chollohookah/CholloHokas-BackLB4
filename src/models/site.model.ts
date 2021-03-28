@@ -1,10 +1,10 @@
 import {Entity, hasMany, model, property} from '@loopback/repository';
-import {CachimbaModel} from './cachimba-model.model';
+import {ItemModel} from './item-model.model';
 
 @model({
   settings: {
     // model definition goes in here
-    mongodb: {collection: 'minadas'},
+    mongodb: {collection: 'paginas'},
   },
 })
 export class Site extends Entity {
@@ -34,8 +34,8 @@ export class Site extends Entity {
   })
   logo: string;
 
-  @hasMany(() => CachimbaModel)
-  data: CachimbaModel[];
+  @hasMany(() => ItemModel)
+  data: ItemModel[];
 
   @property({
     type: 'string',

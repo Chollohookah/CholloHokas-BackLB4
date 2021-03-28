@@ -1,6 +1,6 @@
 import {TokenService} from '@loopback/authentication';
 import {TokenServiceBindings} from '@loopback/authentication-jwt';
-import {/* inject, */ BindingScope, inject, injectable} from '@loopback/core';
+import { /* inject, */ BindingScope, inject, injectable} from '@loopback/core';
 import {Filter, repository} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
 import {securityId} from '@loopback/security';
@@ -9,9 +9,9 @@ import {Block, UserWithToken} from '../models';
 import {LoginClass} from '../models/login.model';
 import {
   BlockRepository,
-  CachimbaModelRepository,
+  ItemModelRepository,
   SiteRepository,
-  UserRepository,
+  UserRepository
 } from '../repositories';
 import {Utils} from '../static/Utils';
 
@@ -24,11 +24,11 @@ export class UtilsService {
     public jwtService: TokenService,
     @repository(BlockRepository) private blockRepo: BlockRepository,
     @repository(SiteRepository) private siteRepo: SiteRepository,
-    @repository(CachimbaModelRepository)
-    private cachimbaRepo: CachimbaModelRepository,
+    @repository(ItemModelRepository)
+    private cachimbaRepo: ItemModelRepository,
     @repository(UserRepository)
     private userRepo: UserRepository,
-  ) {}
+  ) { }
 
   public async shrinkDatabase() {
     let weekAgo = new Date();

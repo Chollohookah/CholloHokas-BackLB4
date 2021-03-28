@@ -3,7 +3,7 @@ import {
   CountSchema,
   Filter,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
   del,
@@ -13,26 +13,25 @@ import {
   param,
   patch,
   post,
-  requestBody,
+  requestBody
 } from '@loopback/rest';
 import {
-  Site,
-  CachimbaModel,
+  ItemModel, Site
 } from '../models';
 import {SiteRepository} from '../repositories';
 
-export class SiteCachimbaModelController {
+export class SiteItemsModelController {
   constructor(
     @repository(SiteRepository) protected siteRepository: SiteRepository,
   ) { }
 
-  @get('/sites/{id}/cachimba-models', {
+  @get('/sites/{id}/items-models', {
     responses: {
       '200': {
-        description: 'Array of Site has many CachimbaModel',
+        description: 'Array of Site has many ItemsModel',
         content: {
           'application/json': {
-            schema: {type: 'array', items: getModelSchemaRef(CachimbaModel)},
+            schema: {type: 'array', items: getModelSchemaRef(ItemModel)},
           },
         },
       },
@@ -40,16 +39,16 @@ export class SiteCachimbaModelController {
   })
   async find(
     @param.path.string('id') id: string,
-    @param.query.object('filter') filter?: Filter<CachimbaModel>,
-  ): Promise<CachimbaModel[]> {
+    @param.query.object('filter') filter?: Filter<ItemModel>,
+  ): Promise<ItemModel[]> {
     return this.siteRepository.data(id).find(filter);
   }
 
-  @post('/sites/{id}/cachimba-models', {
+  @post('/sites/{id}/items-models', {
     responses: {
       '200': {
         description: 'Site model instance',
-        content: {'application/json': {schema: getModelSchemaRef(CachimbaModel)}},
+        content: {'application/json': {schema: getModelSchemaRef(ItemModel)}},
       },
     },
   })
@@ -58,22 +57,22 @@ export class SiteCachimbaModelController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(CachimbaModel, {
-            title: 'NewCachimbaModelInSite',
+          schema: getModelSchemaRef(ItemModel, {
+            title: 'NewItemsModelInSite',
             exclude: ['id'],
             optional: ['siteId']
           }),
         },
       },
-    }) cachimbaModel: Omit<CachimbaModel, 'id'>,
-  ): Promise<CachimbaModel> {
-    return this.siteRepository.data(id).create(cachimbaModel);
+    }) ItemsModel: Omit<ItemModel, 'id'>,
+  ): Promise<ItemModel> {
+    return this.siteRepository.data(id).create(ItemsModel);
   }
 
-  @patch('/sites/{id}/cachimba-models', {
+  @patch('/sites/{id}/items-models', {
     responses: {
       '200': {
-        description: 'Site.CachimbaModel PATCH success count',
+        description: 'Site.ItemsModel PATCH success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
@@ -83,27 +82,27 @@ export class SiteCachimbaModelController {
     @requestBody({
       content: {
         'application/json': {
-          schema: getModelSchemaRef(CachimbaModel, {partial: true}),
+          schema: getModelSchemaRef(ItemModel, {partial: true}),
         },
       },
     })
-    cachimbaModel: Partial<CachimbaModel>,
-    @param.query.object('where', getWhereSchemaFor(CachimbaModel)) where?: Where<CachimbaModel>,
+    ItemsModel: Partial<ItemModel>,
+    @param.query.object('where', getWhereSchemaFor(ItemModel)) where?: Where<ItemModel>,
   ): Promise<Count> {
-    return this.siteRepository.data(id).patch(cachimbaModel, where);
+    return this.siteRepository.data(id).patch(ItemsModel, where);
   }
 
-  @del('/sites/{id}/cachimba-models', {
+  @del('/sites/{id}/items-models', {
     responses: {
       '200': {
-        description: 'Site.CachimbaModel DELETE success count',
+        description: 'Site.ItemsModel DELETE success count',
         content: {'application/json': {schema: CountSchema}},
       },
     },
   })
   async delete(
     @param.path.string('id') id: string,
-    @param.query.object('where', getWhereSchemaFor(CachimbaModel)) where?: Where<CachimbaModel>,
+    @param.query.object('where', getWhereSchemaFor(ItemModel)) where?: Where<ItemModel>,
   ): Promise<Count> {
     return this.siteRepository.data(id).delete(where);
   }
