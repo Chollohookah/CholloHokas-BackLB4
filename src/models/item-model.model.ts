@@ -71,6 +71,12 @@ export class ItemModel extends Entity {
     type: 'string',
     required: true,
   })
+  tipo: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
   precioOriginal: string;
 
   @property({
@@ -118,7 +124,7 @@ export class ItemModel extends Entity {
 
   @property({
     type: 'string',
-    mongodb: {dataType: 'ObjectId'}
+    mongodb: {dataType: 'ObjectId'},
   })
   siteId?: string;
 

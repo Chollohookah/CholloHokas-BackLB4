@@ -4,7 +4,7 @@ import {
   Filter,
   FilterExcludingWhere,
   repository,
-  Where
+  Where,
 } from '@loopback/repository';
 import {
   del,
@@ -14,7 +14,7 @@ import {
   patch,
   post,
   put,
-  requestBody
+  requestBody,
 } from '@loopback/rest';
 import {Block} from '../models';
 import {BlockRepository} from '../repositories';
@@ -23,7 +23,7 @@ export class BlockController {
   constructor(
     @repository(BlockRepository)
     public blockRepository: BlockRepository,
-  ) { }
+  ) {}
 
   @post('/blocks', {
     responses: {
@@ -135,9 +135,10 @@ export class BlockController {
     },
   })
   async findLatestBlock(
+    @param.header.string('typeItem') typeItem: string,
     @param.filter(Block) filter?: Filter<Block>,
   ): Promise<Block> {
-    return await this.blockRepository.returnLatestValidBlock(filter);
+    return await this.blockRepository.returnLatestValidBlock(filter, typeItem);
   }
 
   @patch('/blocks/{id}', {

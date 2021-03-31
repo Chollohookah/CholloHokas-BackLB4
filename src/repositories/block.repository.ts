@@ -2,8 +2,9 @@ import {Getter, inject} from '@loopback/core';
 import {
   DefaultCrudRepository,
   HasManyRepositoryFactory,
-  repository
+  repository,
 } from '@loopback/repository';
+import {HttpErrors} from '@loopback/rest';
 import {DbDataSource} from '../datasources';
 import {Block, BlockRelations, Site} from '../models';
 import {SiteRepository} from './site.repository';
@@ -31,7 +32,12 @@ export class BlockRepository extends DefaultCrudRepository<
     this.registerInclusionResolver('minedIds', this.minedIds.inclusionResolver);
   }
 
-  public async returnLatestValidBlock(filter: any) {
+  public async returnLatestValidBlock(filter?: any, typeItem?: string) {
+    if (typeItem && !this.checkIfTypeIsCorrect(typeItem)) {
+      throw new HttpErrors.BadRequest(
+        `Has introducido un tipo de item incorrecto.`,
+      );
+    }
     let baseFilter = {
       order: 'dateBlock desc',
     };
@@ -39,27 +45,45 @@ export class BlockRepository extends DefaultCrudRepository<
       include: [
         {
           relation: 'minedIds',
+          where: {name: 'BengalaSpain'},
           scope: {
-            include: [{relation: 'data'}],
+            include: [
+              {
+                relation: 'data',
+                scope: typeItem
+                  ? {
+                      where: {tipo: typeItem},
+                    }
+                  : {},
+              },
+            ],
           },
         },
       ],
     };
-    console.log("suave")
     let bloquesDescendientesFecha = await this.find(baseFilter as any);
-    console.log("suave 2")
     for (const bloque of bloquesDescendientesFecha) {
       let estadoOK = Object.keys(bloque.statuses).every(entry => {
         return (bloque.statuses as any)[entry] === true;
       });
       if (estadoOK) {
-        console.log("suave 3")
         let bloqueReturn = await this.findById(bloque.id, include);
-        console.log(bloqueReturn)
         return bloqueReturn;
       }
     }
-
     return bloquesDescendientesFecha[0];
+  }
+
+  private checkIfTypeIsCorrect(typeItem: string) {
+    return [
+      'cachimba',
+      'sabor',
+      'cazoleta',
+      'accesorio',
+      'carbon',
+      'manguera',
+      'melaza',
+      'esencias',
+    ].includes(typeItem.trim().toLowerCase());
   }
 }
