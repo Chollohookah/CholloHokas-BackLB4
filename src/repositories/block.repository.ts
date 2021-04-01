@@ -45,7 +45,6 @@ export class BlockRepository extends DefaultCrudRepository<
       include: [
         {
           relation: 'minedIds',
-          where: {name: 'BengalaSpain'},
           scope: {
             include: [
               {
