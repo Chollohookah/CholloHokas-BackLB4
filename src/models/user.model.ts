@@ -1,4 +1,6 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Rol} from './rol.model';
+import {UserRol} from './user-rol.model';
 
 @model({settings: {strict: false}})
 export class User extends Entity {
@@ -27,6 +29,8 @@ export class User extends Entity {
   })
   name: string;
 
+  @hasMany(() => Rol, {through: {model: () => UserRol}})
+  rols: Rol[];
   // Define well-known properties here
 
   // Indexer property to allow additional data

@@ -1,4 +1,5 @@
 import {authenticate} from '@loopback/authentication';
+import {authorize} from '@loopback/authorization';
 import {
   Count,
   CountSchema,
@@ -18,6 +19,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
+import {basicAuthorization} from '../middlewares/auth.midd';
 import {BlogPost} from '../models';
 import {BlogPostRepository} from '../repositories';
 
@@ -28,6 +30,11 @@ export class BlogPostController {
     public blogPostRepository: BlogPostRepository,
   ) {}
 
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['AD'],
+    voters: [basicAuthorization],
+  })
   @post('/blog-posts')
   @response(200, {
     description: 'BlogPost model instance',
@@ -49,6 +56,7 @@ export class BlogPostController {
     return this.blogPostRepository.create(blogPost);
   }
 
+  @authenticate('jwt')
   @get('/blog-posts/count')
   @response(200, {
     description: 'BlogPost model count',
@@ -58,6 +66,7 @@ export class BlogPostController {
     return this.blogPostRepository.count(where);
   }
 
+  @authenticate('jwt')
   @get('/blog-posts')
   @response(200, {
     description: 'Array of BlogPost model instances',
@@ -75,7 +84,11 @@ export class BlogPostController {
   ): Promise<BlogPost[]> {
     return this.blogPostRepository.find(filter);
   }
-
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['AD'],
+    voters: [basicAuthorization],
+  })
   @patch('/blog-posts')
   @response(200, {
     description: 'BlogPost PATCH success count',
@@ -94,7 +107,7 @@ export class BlogPostController {
   ): Promise<Count> {
     return this.blogPostRepository.updateAll(blogPost, where);
   }
-
+  @authenticate('jwt')
   @get('/blog-posts/{id}')
   @response(200, {
     description: 'BlogPost model instance',
@@ -111,7 +124,11 @@ export class BlogPostController {
   ): Promise<BlogPost> {
     return this.blogPostRepository.findById(id, filter);
   }
-
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['AD'],
+    voters: [basicAuthorization],
+  })
   @patch('/blog-posts/{id}')
   @response(204, {
     description: 'BlogPost PATCH success',
@@ -130,6 +147,11 @@ export class BlogPostController {
     await this.blogPostRepository.updateById(id, blogPost);
   }
 
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['AD'],
+    voters: [basicAuthorization],
+  })
   @put('/blog-posts/{id}')
   @response(204, {
     description: 'BlogPost PUT success',
@@ -141,6 +163,11 @@ export class BlogPostController {
     await this.blogPostRepository.replaceById(id, blogPost);
   }
 
+  @authenticate('jwt')
+  @authorize({
+    allowedRoles: ['AD'],
+    voters: [basicAuthorization],
+  })
   @del('/blog-posts/{id}')
   @response(204, {
     description: 'BlogPost DELETE success',

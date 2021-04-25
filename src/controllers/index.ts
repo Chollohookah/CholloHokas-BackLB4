@@ -6,8 +6,11 @@ export * from './email.controller';
 export * from './error.controller';
 export * from './items.controller';
 export * from './ping.controller';
+export * from './rol.controller';
 export * from './site-items-model.controller';
 export * from './site.controller';
+export * from './specs/';
+export * from './user-rol-controller.controller';
+export * from './user-rol.controller';
 export * from './user.controller';
 export * from './utils.controller';
-

@@ -1,34 +1,44 @@
-import {TokenService} from '@loopback/authentication';
-import {TokenServiceBindings} from '@loopback/authentication-jwt';
-import { /* inject, */ BindingScope, inject, injectable} from '@loopback/core';
+import {/* inject, */ BindingScope, injectable} from '@loopback/core';
 import {Filter, repository} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
-import {securityId} from '@loopback/security';
+import {securityId, UserProfile} from '@loopback/security';
+import moment from 'moment';
+import {promisify} from 'util';
 import {ResultShrinkDatabase} from '../interfaces/ResultUtils';
-import {Block, UserWithToken} from '../models';
+import {Block, User, UserWithToken} from '../models';
 import {LoginClass} from '../models/login.model';
 import {
   BlockRepository,
+  EmailRepository,
   ItemModelRepository,
+  RolRepository,
   SiteRepository,
-  UserRepository
+  UserRepository,
+  UserRolRepository,
 } from '../repositories';
 import {Utils} from '../static/Utils';
 
 const fs = require('file-system');
+const jwt = require('jsonwebtoken');
+const signAsync = promisify(jwt.sign);
+const verifyAsync = promisify(jwt.verify);
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class UtilsService {
   constructor(
-    @inject(TokenServiceBindings.TOKEN_SERVICE)
-    public jwtService: TokenService,
     @repository(BlockRepository) private blockRepo: BlockRepository,
     @repository(SiteRepository) private siteRepo: SiteRepository,
     @repository(ItemModelRepository)
     private cachimbaRepo: ItemModelRepository,
     @repository(UserRepository)
     private userRepo: UserRepository,
-  ) { }
+    @repository(UserRolRepository)
+    private userRolRepo: UserRolRepository,
+    @repository(RolRepository)
+    private rolRepo: RolRepository,
+    @repository(EmailRepository)
+    private emailRepo: EmailRepository,
+  ) {}
 
   public async shrinkDatabase() {
     let weekAgo = new Date();
@@ -79,23 +89,58 @@ export class UtilsService {
     } as ResultShrinkDatabase);
   }
 
+  async verifyToken(token: string): Promise<UserProfile> {
+    if (!token) {
+      throw new HttpErrors.Unauthorized(
+        `Error verifying token : 'token' is null`,
+      );
+    }
+
+    let userProfile: UserProfile;
+    try {
+      // decode user profile from token
+      const decodedToken = await verifyAsync(token, process.env.JWT_SECRET);
+      let usuario = await this.userRepo.findOne({
+        where: {username: decodedToken.email},
+      });
+      userProfile = Object.assign(
+        {[securityId]: '', name: ''},
+        {
+          [securityId]: usuario?.getId(),
+          name: decodedToken.name,
+          id: usuario?.getId(),
+          role: decodedToken.roles,
+        },
+      );
+    } catch (error) {
+      throw new HttpErrors.Unauthorized(
+        `Error verifying token : ${error.message}`,
+      );
+    }
+    return userProfile;
+  }
+
   public async login(loginData: LoginClass): Promise<UserWithToken> {
     if (loginData.email && loginData.pass) {
       if (Utils.validateEmail(loginData.email)) {
-        let user = await this.userRepo.returnUser(
+        let user = await this.userRepo.verifyCredentials(
           loginData.email,
           loginData.pass,
         );
-        let expireSeconds = 86400;
         let userJWT = {
           [securityId]: user.id as any,
-          email: user.email,
+          email: user.username,
           name: user.name,
+          roles: user.rols.map(entry => entry.codigo),
         };
 
-        let token = await this.jwtService.generateToken(userJWT);
+        let experingTime = moment().add(7, 'days').toDate();
 
-        return {user, token, expiresIn: expireSeconds};
+        let token = await signAsync(userJWT, process.env.JWT_SECRET, {
+          expiresIn: Number(experingTime),
+        });
+
+        return {user, token, expiresIn: Number(experingTime)};
       } else {
         throw new HttpErrors.Unauthorized(
           `${loginData.email} no es un correo electronico valido.`,
@@ -106,5 +151,25 @@ export class UtilsService {
         `Debes proveer los campos email y pass.`,
       );
     }
+  }
+
+  public async registerUser(user: User) {
+    let userCreated = await this.userRepo.createEncriptedUser(user as any);
+    let userBasicRol = await this.rolRepo.findOne({
+      where: {
+        codigo: 'US',
+      },
+    });
+    await this.userRolRepo.create({
+      rolId: userBasicRol?.id,
+      userId: userCreated.id,
+    });
+
+    try {
+      await this.emailRepo.createWithMailChimp({
+        email: userCreated.username,
+      } as any);
+    } catch (error) {}
+    return userCreated;
   }
 }

@@ -7,3 +7,5 @@ export * from './site.model';
 export * from './user-with-token.model';
 export * from './user.model';
 
+export * from './rol.model';
+export * from './user-rol.model';

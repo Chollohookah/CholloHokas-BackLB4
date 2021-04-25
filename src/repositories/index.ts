@@ -6,3 +6,5 @@ export * from './item-model.repository';
 export * from './site.repository';
 export * from './user.repository';
 
+export * from './rol.repository';
+export * from './user-rol.repository';
