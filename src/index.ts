@@ -19,7 +19,7 @@ if (require.main === module) {
   // Run the application
   const config = {
     rest: {
-      protocol: 'https',
+      protocol: process.env.PRODUCTION_ENABLED === 'true' ? 'https' : 'http',
       key: fs.readFileSync(
         require('path').resolve(__dirname, '../certs/privkey.pem'),
       ),
@@ -27,7 +27,7 @@ if (require.main === module) {
         require('path').resolve(__dirname, '../certs/fullchain.pem'),
       ),
       port: +(process.env.PORT ?? 3000),
-      host: process.env.HOST,
+      host: process.env.URL,
 
       // The `gracePeriodForClose` provides a graceful close for http/https
       // servers with keep-alive clients. The default value is `Infinity`

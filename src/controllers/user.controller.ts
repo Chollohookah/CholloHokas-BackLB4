@@ -18,7 +18,7 @@ import {
   requestBody,
   response,
 } from '@loopback/rest';
-import {User} from '../models';
+import {ResetPasswordFinish, ResetPasswordInit, User} from '../models';
 import {
   RolRepository,
   UserRepository,
@@ -36,6 +36,20 @@ export class UserController {
     public rolRepository: RolRepository,
     @service(UtilsService) public utils: UtilsService,
   ) {}
+
+  @post('/reset-password/init')
+  async resetPasswordInit(
+    @requestBody() resetPasswordInit: ResetPasswordInit,
+  ): Promise<string> {
+    return this.userRepository.resetPassword(resetPasswordInit.email);
+  }
+
+  @post('/reset-password/finish')
+  async resetPassworFinish(
+    @requestBody() resetPasswordFinish: ResetPasswordFinish,
+  ): Promise<string> {
+    return this.userRepository.resetPasswordFinish(resetPasswordFinish);
+  }
 
   @post('/register-user')
   @response(200, {

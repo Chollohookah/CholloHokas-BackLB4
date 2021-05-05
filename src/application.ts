@@ -39,7 +39,7 @@ export class CholloHookaBackApplication extends BootMixin(
     // this.dataSource(DbDataSource, UserServiceBindings.DATASOURCE_NAME);
 
     // Customize @loopback/rest-explorer configuration here
-    if (!process.env.PRODUCTION_ENABLED) {
+    if (!(process.env.PRODUCTION_ENABLED === 'true')) {
       const spec: OpenApiSpec = {
         openapi: '3.0.0',
         info: {title: 'pkg.name', version: 'pkg.version'},

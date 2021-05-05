@@ -1,4 +1,4 @@
-import {Entity, model, property, hasMany} from '@loopback/repository';
+import {Entity, hasMany, model, property} from '@loopback/repository';
 import {Rol} from './rol.model';
 import {UserRol} from './user-rol.model';
 
@@ -28,6 +28,12 @@ export class User extends Entity {
     required: true,
   })
   name: string;
+
+  @property({
+    type: 'string',
+    required: false,
+  })
+  resetKey?: string;
 
   @hasMany(() => Rol, {through: {model: () => UserRol}})
   rols: Rol[];
