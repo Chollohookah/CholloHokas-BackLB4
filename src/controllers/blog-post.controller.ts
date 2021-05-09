@@ -23,7 +23,6 @@ import {basicAuthorization} from '../middlewares/auth.midd';
 import {BlogPost} from '../models';
 import {BlogPostRepository} from '../repositories';
 
-@authenticate('jwt')
 export class BlogPostController {
   constructor(
     @repository(BlogPostRepository)
@@ -66,7 +65,6 @@ export class BlogPostController {
     return this.blogPostRepository.count(where);
   }
 
-  @authenticate('jwt')
   @get('/blog-posts')
   @response(200, {
     description: 'Array of BlogPost model instances',
@@ -107,7 +105,7 @@ export class BlogPostController {
   ): Promise<Count> {
     return this.blogPostRepository.updateAll(blogPost, where);
   }
-  @authenticate('jwt')
+
   @get('/blog-posts/{id}')
   @response(200, {
     description: 'BlogPost model instance',
@@ -124,6 +122,24 @@ export class BlogPostController {
   ): Promise<BlogPost> {
     return this.blogPostRepository.findById(id, filter);
   }
+
+  @get('/blog-posts/slug/{slug}')
+  @response(200, {
+    description: 'BlogPost model instance',
+    content: {
+      'application/json': {
+        schema: getModelSchemaRef(BlogPost, {includeRelations: true}),
+      },
+    },
+  })
+  async findBySlug(
+    @param.path.string('slug') slug: string,
+    @param.filter(BlogPost, {exclude: 'where'})
+    filter?: FilterExcludingWhere<BlogPost>,
+  ): Promise<BlogPost | null> {
+    return this.blogPostRepository.findBySlug(slug);
+  }
+
   @authenticate('jwt')
   @authorize({
     allowedRoles: ['AD'],

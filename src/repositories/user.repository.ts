@@ -6,7 +6,7 @@ import {
 } from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
 import * as bcrypt from 'bcryptjs';
-import * as AES from 'crypto-js/aes';
+import * as CryptoJS from 'crypto-js';
 import {v4 as uuidv4} from 'uuid';
 import {DbDataSource} from '../datasources';
 import {
@@ -60,12 +60,9 @@ export class UserRepository extends DefaultCrudRepository<
       });
       if (userEncontrado) {
         userEncontrado.resetKey = uuidv4();
-        try {
-          // Updates the user to store their reset key with error handling
-          await this.updateById(userEncontrado.id, userEncontrado);
-        } catch (e) {
-          return e;
-        }
+        // Updates the user to store their reset key with error handling
+        console.log(userEncontrado);
+        await this.updateById(userEncontrado.id, userEncontrado);
 
         const nodeMailer: NodeMailer = await this.email.sendResetPasswordMail(
           userEncontrado,
@@ -94,14 +91,17 @@ export class UserRepository extends DefaultCrudRepository<
   }
 
   public async resetPasswordFinish(resetPasswordFinish: ResetPasswordFinish) {
-    let decryptedPass = AES.decrypt(
-      Utils.universalAtob(resetPasswordFinish.encriptedPass),
+    let decrypted = CryptoJS.AES.decrypt(
+      resetPasswordFinish.encriptedPass,
       process.env.AES_KEY as any,
-    ).toString();
-    console.log(decryptedPass);
+      {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7,
+      },
+    ).toString(CryptoJS.enc.Utf8);
 
     const {pass, resetKey} = await Utils.validateKeyPassword(
-      decryptedPass,
+      decrypted,
       resetPasswordFinish.resetKey,
     );
 
@@ -109,7 +109,8 @@ export class UserRepository extends DefaultCrudRepository<
     const foundUser = await this.findOne({
       where: {resetKey: resetKey},
     });
-
+    //U2FsdGVkX1892Okyq5dJ1R+A/lr8ZryMS1Go7zNKqrU=
+    //VTJGc2RHVmtYMTg5Mk9reXE1ZEoxUitBL2xyOFpyeU1TMUdvN3pOS3FyVT0=
     // No user account found
     if (!foundUser) {
       throw new HttpErrors.NotFound(
@@ -117,7 +118,7 @@ export class UserRepository extends DefaultCrudRepository<
       );
     }
     // Encrypt password to avoid storing it as plain text
-    let hash = bcrypt.hashSync(decryptedPass, 8);
+    let hash = bcrypt.hashSync(decrypted, 8);
     try {
       // Update user password with the newly provided password
       foundUser.pass = hash;

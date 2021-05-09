@@ -40,7 +40,7 @@ export class UserController {
   @post('/reset-password/init')
   async resetPasswordInit(
     @requestBody() resetPasswordInit: ResetPasswordInit,
-  ): Promise<string> {
+  ): Promise<{message: string}> {
     return this.userRepository.resetPassword(resetPasswordInit.email);
   }
 

@@ -1,4 +1,4 @@
-import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {belongsTo, Entity, model, property} from '@loopback/repository';
 import {User} from './user.model';
 
 @model()
@@ -32,6 +32,18 @@ export class BlogPost extends Entity {
     required: true,
   })
   htmlContent: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  slug: string;
+
+  @property({
+    type: 'boolean',
+    required: false,
+  })
+  visible: boolean;
 
   @property({
     type: 'boolean',
