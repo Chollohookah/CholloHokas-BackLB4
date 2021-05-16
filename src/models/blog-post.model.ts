@@ -11,6 +11,20 @@ export class BlogPost extends Entity {
   id?: string;
 
   @property({
+    type: 'date',
+    default: () => new Date(),
+  })
+  created?: string;
+
+  @property({
+    type: 'number',
+    default: () => {
+      return Math.floor(Math.random() * (100 - 10 + 1) + 10);
+    },
+  })
+  likes?: string;
+
+  @property({
     type: 'string',
   })
   imgPostBase64?: string;
